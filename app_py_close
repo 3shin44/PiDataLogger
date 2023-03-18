@@ -9,6 +9,15 @@ app = Flask(__name__)
 def hello():
     return 'Hello, World!'
 
+@app.route('/version', methods=['GET'])
+def version():
+    return 'v1.0'
+
+@app.route('/data/appInfo/id/<int:id>', methods=['GET'])
+def queryDataMessageById(id):
+    print("type(id) : ", type(id))
+    return 'int => {}'.format(id)
+
 # Run the app
 if __name__ == '__main__':
     app.run()
