@@ -1,8 +1,5 @@
 # 這個多次呼叫時會爆掉 stack資料顯示可能為BUG
-from apscheduler.schedulers.background import BackgroundScheduler
-# 改標準函式庫
-import threading
-import time
+# from apscheduler.schedulers.background import BackgroundScheduler
 
 # import the module to create a database engine
 from sqlalchemy import create_engine, MetaData, Table
@@ -48,7 +45,12 @@ def getTemperature():
     value = round(random.uniform(10, 100), 2)
     return value
 
-def insertRecord():
+import threading
+execFlag = True
+def insertRecord(flag):
+    if(not flag):
+       return
+    print("start insert")
     # table model
     DATALOGGER_table = Table('DATALOGGER', metadata, autoload_with=engine)
     # fetch data from sensor
@@ -57,27 +59,27 @@ def insertRecord():
     now = datetime.now()
     time_mark = now.strftime("%Y-%m-%d %H:%M:%S")
     value = getTemperature()
-
     # create insert object and define values, commit change
     ins = DATALOGGER_table.insert().values(DATE=time_mark, TEMP=value)
     session.execute(ins)
     session.commit()
+    loopSelf()
 
-# 你會爆掉
-sched = BackgroundScheduler()
+def loopSelf():
+    global execFlag
+    timer = threading.Timer(1, insertRecord, (execFlag,))
+    timer.start()
+
 def serviceStartRecord():
-    sched.add_job(insertRecord, 'interval', seconds=1, id="serviceStartRecord")
-    sched.start()
-
+    global execFlag
+    execFlag = True
+    loopSelf()
+    return "start success"
 
 def serviceStopRecord():
-    try:
-        sched.remove_job("serviceStartRecord")
-        sched.shutdown(wait=False)
-    except Exception as e:
-        # handle exception
-        print(e)
-        return "record stop"
+    global execFlag
+    execFlag = False
+    return "record stop"
 
 
 def serviceGetRecordData():
