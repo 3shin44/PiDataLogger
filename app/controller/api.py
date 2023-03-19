@@ -38,3 +38,20 @@ def queryByName():
     name = data.get('name')
     from app.service.service import query_myTable
     return query_myTable(name)
+
+@api.route('/startRecord', methods=['get'])
+def startRecord():
+    from app.service.service import serviceStartRecord
+    serviceStartRecord()
+    return "start success"
+
+@api.route('/stopRecord', methods=['get'])
+def stopRecord():
+    from app.service.service import serviceStopRecord
+    serviceStopRecord()
+    return "record stop"
+
+@api.route('/getRecordData', methods=['get'])
+def getRecordData():
+    from app.service.service import serviceGetRecordData
+    return serviceGetRecordData()

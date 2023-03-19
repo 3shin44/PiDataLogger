@@ -4,14 +4,18 @@
       <apexchart ref="chart" type="line" height="350" :options="chartOptions" :series="series"></apexchart>
     </div>
 
-    <button @click="initFetch">START</button>
-    <button @click="stopFetch">HALT</button>
+    <button class="btn btn-success" @click="startPiDataLogger">START</button>
+    <button class="btn btn-secondary ms-1" @click="stopPiDataLogger">HALT</button>
+    <button class="btn btn-danger ms-1" @click="continiousGetRecord">TEST</button>
+
+  
   </div>
 </template>
 
 <script>
   import { apexChartConifg } from '@/assets/chartConfig/chartConfig.js'
   import moment from 'moment';
+  import api from '@/api/apiManager'
   export default {
     name: 'RealtimeFigure',
     props: {
@@ -27,6 +31,54 @@
       }
     },
     methods: {
+      startPiDataLogger : async ()=>{
+        let status = ""
+        try {
+          let res = await api.startRecord()
+          status = res.data
+        } catch (error) {
+          console.log("start fail: ", error)
+        } finally {
+          if(status){
+            // 呼叫持續更新函式
+            // this.getCurrentRecord()
+          }
+        }
+      },
+      stopPiDataLogger : async ()=>{
+        let result = ""
+        try {
+          let res = await api.stopRecord()
+          result = res.data
+        } catch (error) {
+          console.log("stop logger fail: ", error)
+        } finally {
+          if(result){
+            console.log(result)
+          }
+        }
+      },
+      getNewestRecord: async ()=>{
+        try {
+          let res = await api.getRecordData()
+          return res.data || []
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      continiousGetRecord(){
+        this.callibrator = setInterval( async ()=>{
+          let newData = await this.getNewestRecord()
+          let parseData = []
+          let parseLabel = []
+          newData.forEach(element => {
+            parseLabel.push(element.DATE)
+            parseData.push(element.TEMP)
+          });
+
+          this.updateData(parseData, parseLabel)
+        }, 1000)
+      },
       generateData() {
         let value, label
         label = moment().format("HH:mm:ss")
