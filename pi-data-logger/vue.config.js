@@ -1,4 +1,8 @@
 const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
-  outputDir: '../webapp'
+  // for flask templates
+  outputDir: '../templates',
+  // frontend file apply relative path
+  publicPath: "./",
+  filenameHashing: false
 })

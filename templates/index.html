@@ -1,9 +1,20 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="">
+
 <head>
-    <title>My Flask App</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" href="favicon.ico">
+    <title>pi-data-logger</title>
+    <script defer="defer" src="{{ url_for('static', filename='js/chunk-vendors.js') }}"></script>
+    <script defer="defer" src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <link href="{{ url_for('static', filename='css/app.css') }}" rel="stylesheet">
 </head>
-<body>
-    <h1>Welcome to my Flask app!</h1>
+
+<body><noscript><strong>We're sorry but pi-data-logger doesn't work properly without JavaScript enabled. Please enable
+            it to continue.</strong></noscript>
+    <div id="app"></div>
 </body>
+
 </html>
