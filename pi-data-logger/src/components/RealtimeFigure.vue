@@ -1,16 +1,76 @@
 <template>
   <div class="realtime-figure">
+    <div id="chart">
+      <apexchart ref="chart" type="line" height="350" :options="chartOptions" :series="series"></apexchart>
+    </div>
 
+    <button @click="initFetch">START</button>
+    <button @click="stopFetch">HALT</button>
   </div>
 </template>
 
 <script>
-export default {
-  name: 'RealtimeFigure',
-  props: {
-    msg: String
+  import { apexChartConifg } from '@/assets/chartConfig/chartConfig.js'
+  import moment from 'moment';
+  export default {
+    name: 'RealtimeFigure',
+    props: {
+      msg: String
+    },
+    data() {
+      return {
+        series: [{
+          data: []
+        }],
+        chartOptions: apexChartConifg.basicChartOptions,
+        callibrator: null
+      }
+    },
+    methods: {
+      generateData() {
+        let value, label
+        label = moment().format("HH:mm:ss")
+        function getRndInteger(min, max) {
+          return Math.floor(Math.random() * (max - min + 1)) + min
+        }
+        value = getRndInteger(20, 120)
+        return { label, value }
+      },
+      updateData(dataArray, labelArray) {
+        this.$refs.chart.updateSeries([{
+          data: dataArray
+        }])
+        this.$refs.chart.updateOptions({
+          xaxis: {
+            categories: labelArray
+          }
+        })
+      },
+      initFetch() {
+        this.callibrator = setInterval(() => {
+          let newData = []
+          for (let i = 0; i < 10; i++) {
+            newData.push( this.generateData() )
+          }
+
+          let dataArray=[], labelArray=[]
+          for (let i = 0; i < 10; i++) {
+            dataArray.push(newData[i].value)
+            labelArray.push(newData[i].label)
+          }
+
+          this.updateData(dataArray, labelArray)
+        }, 1000)
+
+      },
+      stopFetch() {
+        clearInterval(this.callibrator)
+      }
+    },
+    mounted() {
+      this.chartOptions.title.text = "DEMO CHART"
+    }
   }
-}
 </script>
 
 <style scoped>

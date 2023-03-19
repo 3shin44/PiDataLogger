@@ -1,23 +1,25 @@
 <template>
-
+  <RealtimeFigure />
   <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
 
-  <button type="button" class="btn btn-primary" @click="getVersion">11111</button>
+  <!-- <button type="button" class="btn btn-primary" @click="getVersion">11111</button>
   <button type="button" class="btn btn-primary" @click="getVersionAPI">22222</button>
   <div class="card" style="width: 18rem;">
     <h5><span class="badge bg-secondary"> VERSION</span> {{version}}</h5>
     <p>{{allResponse}}</p>
-  </div>
+  </div> -->
 </template>
 
 <script>
   // import HelloWorld from './components/HelloWorld.vue'
+  import RealtimeFigure from './components/RealtimeFigure.vue'
   import axios from 'axios'
   import api from '@/api/apiManager'
   export default {
     name: 'App',
     components: {
-      // HelloWorld
+      // HelloWorld,
+      RealtimeFigure
     },
     data() {
       return {
