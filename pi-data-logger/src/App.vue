@@ -5,7 +5,7 @@
   <button type="button" class="btn btn-primary" @click="getVersion">11111</button>
   <button type="button" class="btn btn-primary" @click="getVersionAPI">22222</button>
   <div class="card" style="width: 18rem;">
-    <h5>{{version}}<span class="badge bg-secondary"> VERSION</span></h5>
+    <h5><span class="badge bg-secondary"> VERSION</span> {{version}}</h5>
     <p>{{allResponse}}</p>
   </div>
 </template>
@@ -53,7 +53,7 @@
 </script>
 
 <style lang="scss">
-  @import '@/assets/css/index.scss';
+  
   #app {
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
