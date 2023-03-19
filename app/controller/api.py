@@ -43,7 +43,7 @@ def queryByName():
 def startRecord():
     from app.service.service import serviceStartRecord
     serviceStartRecord()
-    return "start success"
+    return Response("start success", mimetype='text/plain')
 
 @api.route('/stopRecord', methods=['get'])
 def stopRecord():
@@ -54,4 +54,5 @@ def stopRecord():
 @api.route('/getRecordData', methods=['get'])
 def getRecordData():
     from app.service.service import serviceGetRecordData
+    
     return serviceGetRecordData()

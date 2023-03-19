@@ -50,7 +50,6 @@ execFlag = True
 def insertRecord(flag):
     if(not flag):
        return
-    print("start insert")
     # table model
     DATALOGGER_table = Table('DATALOGGER', metadata, autoload_with=engine)
     # fetch data from sensor
@@ -59,6 +58,7 @@ def insertRecord(flag):
     now = datetime.now()
     time_mark = now.strftime("%Y-%m-%d %H:%M:%S")
     value = getTemperature()
+    print(f"insert data: Date:{time_mark}, Value: {value}")
     # create insert object and define values, commit change
     ins = DATALOGGER_table.insert().values(DATE=time_mark, TEMP=value)
     session.execute(ins)
@@ -67,7 +67,7 @@ def insertRecord(flag):
 
 def loopSelf():
     global execFlag
-    timer = threading.Timer(1, insertRecord, (execFlag,))
+    timer = threading.Timer(2, insertRecord, (execFlag,))
     timer.start()
 
 def serviceStartRecord():
@@ -86,7 +86,7 @@ def serviceGetRecordData():
     from app.models.mytable import DATALOGGER
     # query all data from User table and order by ID in descending order 
     query = session.query(DATALOGGER).order_by(DATALOGGER.DATE.desc()) 
-    results = query.limit(10).all()
+    results = query.limit(20).all()
 
     def rowData_to_dict(rowData): # define a function to convert a User object to a dictionary
         return {"ID": rowData.ID, "DATE": str(rowData.DATE), "TEMP": rowData.TEMP} # return a dictionary with the attributes of the user
