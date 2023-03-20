@@ -4,16 +4,21 @@
 # import the module to create a database engine
 from sqlalchemy import create_engine, MetaData, Table
 from sqlalchemy import text  # import the module to execute SQL statements
-from sqlalchemy.orm import sessionmaker
+
 import json  # import the module to handle JSON data
 
 url = "mysql+pymysql://root:root@localhost/AZAG_DB"  # define the database URL
 engine = create_engine(url)  # create a database engine
 metadata = MetaData()
-# start session
-Session = sessionmaker(bind=engine)
-session = Session()
 connection = engine.connect()  # connect to the database
+
+# start session
+def stratSesstion():
+    from sqlalchemy.orm import sessionmaker
+    global engine
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    return session
 
 
 def test_query_myTable():  # define a function to test query all data from MYTABLE
@@ -61,13 +66,14 @@ def insertRecord(flag):
     print(f"insert data: Date:{time_mark}, Value: {value}")
     # create insert object and define values, commit change
     ins = DATALOGGER_table.insert().values(DATE=time_mark, TEMP=value)
+    session = stratSesstion()
     session.execute(ins)
     session.commit()
     loopSelf()
 
 def loopSelf():
     global execFlag
-    timer = threading.Timer(2, insertRecord, (execFlag,))
+    timer = threading.Timer(1, insertRecord, (execFlag,))
     timer.start()
 
 def serviceStartRecord():
@@ -85,6 +91,7 @@ def serviceStopRecord():
 def serviceGetRecordData():
     from app.models.mytable import DATALOGGER
     # query all data from User table and order by ID in descending order 
+    session = stratSesstion()
     query = session.query(DATALOGGER).order_by(DATALOGGER.DATE.desc()) 
     results = query.limit(20).all()
 

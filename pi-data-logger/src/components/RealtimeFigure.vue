@@ -1,10 +1,19 @@
 <template>
   <div class="realtime-figure">
+    <h2>Real-time Temperature Monitor</h2>
     <div id="chart">
+      <div class="realtime-figure-indicator" v-if="operatorLock">
+        <div class="spinner-grow text-danger spinner-grow-sm" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <span class="ms-1">Current Temp.(C): {{ currentTemp }}</span>
+      </div>
+
       <apexchart ref="chart" type="line" height="350" :options="chartOptions" :series="series"></apexchart>
     </div>
 
-    <button class="btn btn-success" @click="startPiDataLogger">START</button>
+    <button class="btn btn-success" :class="{ 'btn-danger' : operatorLock }" @click="startPiDataLogger"
+      :disabled="operatorLock">{{ operatorLock ? 'RECORDING' : 'START' }}</button>
     <button class="btn btn-secondary ms-1" @click="stopPiDataLogger">STOP</button>
   </div>
 </template>
@@ -24,7 +33,10 @@
           data: []
         }],
         chartOptions: apexChartConifg.basicChartOptions,
-        callibrator: null
+        fetchInterval: 2000,
+        callibrator: null,
+        operatorLock: false,
+        currentTemp: "N/A"
       }
     },
     methods: {
@@ -39,6 +51,7 @@
             console.log("start fail: ", error)
           } finally {
             if (status) {
+              this.operatorLock = true
               // 啟動持續更新函式
               this.continiousGetRecord()
             }
@@ -48,6 +61,7 @@
       stopPiDataLogger() {
         (async () => {
           clearInterval(this.callibrator)
+          this.operatorLock = false
           let result = ""
           try {
             let res = await api.stopRecord()
@@ -88,11 +102,17 @@
                   parseLabel.push(element.DATE)
                   parseData.push(element.TEMP)
                 });
-                this.updateData(parseData, parseLabel)
+                // sync and show newest data
+                this.syncCurrentTemp(parseData[0])
+                // update apexChart
+                this.updateData(parseData.reverse(), parseLabel.reverse())
               }
             }
           })()
-        }, 1000)
+        }, this.fetchInterval)
+      },
+      syncCurrentTemp(value){
+        this.currentTemp = value
       },
       generateData() {
         let value, label
@@ -135,10 +155,19 @@
       }
     },
     mounted() {
-      this.chartOptions.title.text = "DEMO CHART"
+      // this.chartOptions.title.text = "rt-Temperature"
     }
   }
 </script>
 
 <style scoped>
+  #chart {
+    position: relative;
+  }
+
+  .realtime-figure-indicator {
+    position: absolute;
+    top: 0;
+    left: 2rem;
+  }
 </style>
