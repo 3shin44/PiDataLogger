@@ -7,7 +7,7 @@ from sqlalchemy import text  # import the module to execute SQL statements
 
 import json  # import the module to handle JSON data
 
-url = "mysql+pymysql://root:root@localhost/AZAG_DB"  # define the database URL
+url = "mysql+pymysql://azag:root@localhost/AZAG_DB"  # define the database URL
 engine = create_engine(url)  # create a database engine
 metadata = MetaData()
 connection = engine.connect()  # connect to the database
@@ -22,7 +22,7 @@ def stratSesstion():
 
 
 def test_query_myTable():  # define a function to test query all data from MYTABLE
-    sql = text("SELECT * FROM MYTABLE")  # write the SQL statement
+    sql = text("SELECT * FROM myTable")  # write the SQL statement
     # execute the SQL statement and get the result set
     row = connection.execute(sql)
     results = row.fetchall()  # fetch all rows from the result set
