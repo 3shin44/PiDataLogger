@@ -71,23 +71,26 @@ def insertRecord(flag):
     session.commit()
     loopSelf()
 
+# 再度執行 insertRecord(寫入紀錄)
 def loopSelf():
     global execFlag
     timer = threading.Timer(1, insertRecord, (execFlag,))
     timer.start()
 
+# 啟動記錄服務
 def serviceStartRecord():
     global execFlag
     execFlag = True
     loopSelf()
     return "start success"
 
+# 停止記錄服務
 def serviceStopRecord():
     global execFlag
     execFlag = False
     return "record stop"
 
-
+# 獲取現存紀錄值
 def serviceGetRecordData():
     from app.models.mytable import DATALOGGER
     # query all data from User table and order by ID in descending order 
